@@ -1,6 +1,6 @@
 {
 	"name": "bryles",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Inline css compiled from stylus (incl. browserify transform)",
 	"repository": {
 		"type": "git",
