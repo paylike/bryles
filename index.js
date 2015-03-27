@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var path = require('path');
+var EE = require('events').EventEmitter;
 var assign = require('object-assign');
 var staticModule = require('static-module');
 var quote = require('quote-stream');
@@ -66,7 +67,10 @@ function transform( file, opts ){
 			compress: opts.compress,
 		}, ropts), function( err, css ){
 			styles.end(css);
-		});
+		})
+			.on('file', function( file ){
+				sm.emit('file', file);
+			});
 
 		return stream;
 
@@ -78,7 +82,6 @@ function transform( file, opts ){
 		function end( next ){
 			this.push(')})');
 			this.push(null);
-			sm.emit('file', file);
 			next();
 		}
 	}
@@ -92,18 +95,37 @@ function compile( file, opts, cb ){
 		opts = {};
 	}
 
-	stylus(fs.readFileSync(file, 'utf8'), assign({
-		filename: file,
-	}, opts))
-		.render(function( err, css ){
-			if (err)
-				return cb(err);
+	var ee = new EE();
 
-			css = autoprefixer.process(css).css;
+	var paths = [];
 
-			if (opts.compress)
-				css = cc.minify(css).styles;
+	// nextTick required because render is synchronous
+	process.nextTick(function(){
+		ee.emit('file', file);
 
-			cb(null, css);
-		});
+		stylus(fs.readFileSync(file, 'utf8'), assign({
+			filename: file,
+			paths: paths,
+		}, opts))
+			.render(function( err, css ){
+				if (err) {
+					ee.emit('error', err);
+					return cb && cb(err);
+				}
+
+				css = autoprefixer.process(css).css;
+
+				if (opts.compress)
+					css = cc.minify(css).styles;
+
+				paths.forEach(function( file ){
+					ee.emit('file', file);
+				});
+
+				ee.emit('end', css);
+				cb && cb(null, css);
+			});
+	});
+
+	return ee;
 }
