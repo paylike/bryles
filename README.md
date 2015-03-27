@@ -48,4 +48,4 @@ browserify()
 If you need anything else (sass support?) or more flexibility, send a pull
 request.
 
-You might be interested in [Brarkup](https://github.com/paylike/Brarkup).
+You might be interested in [Brarkup](https://github.com/paylike/brarkup).
