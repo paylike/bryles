@@ -1,12 +1,12 @@
 # Bryles
 
 A highly opinionated package for compiling css (from
-[Stylus](https://github.com/stylus/stylus)) in node and inlined using
+[Stylus](https://github.com/stylus/stylus)) in node and inlining it using
 browserify.
 
 Apart from Stylus also [Autoprefixer](https://github.com/postcss/autoprefixer)
 and [clean-css](https://github.com/jakubpawlowicz/clean-css) (with the
-`compress` flag) is applied.
+`compress` flag) are applied.
 
 ```js
 var bryles = require('bryles');
@@ -48,4 +48,4 @@ browserify()
 If you need anything else (sass support?) or more flexibility, send a pull
 request.
 
-You might be interested in [Brarkup](https://github.com/paylike/brarkup).
+You might also be interested in [brjade](https://github.com/jadejs/brjade).
